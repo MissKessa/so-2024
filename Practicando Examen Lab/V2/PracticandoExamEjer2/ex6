@@ -1,0 +1,7 @@
+30
+6
+ADD -10 0
+INC 3
+TRAP 7
+TRAP 7 4
+TRAP 3

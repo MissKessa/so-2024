@@ -1,0 +1,17 @@
+// 140 Ejercicio V4-E2
+Process [2 - programVerySimple] has caused an exception (invalid processor mode) and is being terminated
+
+// 141 Ejercicio V4-E4-a
+Process [1 - nombre1] has made an invalid system call (777) and is being terminated
+
+// 142 Ejercicio V4-E6-b
+Process [3 - SystemIdleProcess] requests [4] memory positions
+
+// 143 Ejercicio V4-E6-c
+Partition [0: 0 -> 4] has been assigned to process [3 - SystemIdleProcess]
+
+// 144 Ejercicio V4-E6-d-ii
+ERROR: A process could not be created from program [nombrePrograma] because an appropriate partition is not available
+
+// 145 Ejercicio V4-E8
+Partition [0: 0 -> 4] used by process [3 - SystemIdleProcess] has been released

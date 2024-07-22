@@ -1,0 +1,7 @@
+0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16
+
+Questions 13:
+a.It's necessary to save them so when an interrupt occurs or a context switch, we can resume the process at the state it was, as the interrupt or context switch never happened
+b.Yes, the accumulator, registerA and registerB
+c.Yes, because we know need to set the accumulator, registerA and register B to the value stored in the PCB
+d.Yes, the PCB, its initialization, and the method to save the context

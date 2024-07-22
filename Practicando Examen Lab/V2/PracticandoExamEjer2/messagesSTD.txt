@@ -1,0 +1,23 @@
+// Students created messages
+// Format: numberOfMessage,textPrintfFormatedWithColourCodes
+//
+// numbers of messages greather than 100 for students
+//
+101,User program list:\n
+102,\tProgram [@B%s@@] with arrival time [%d]\n
+103,@RERROR: There are not free entries in the process table for the program [%s]\n
+104,@RERROR: Program [%s] is not valid [---%s---]\n
+105,@RERROR: Program [%s] is too big\n
+106,Ready-to-run processes queue:\n
+107,\t\t
+108,[@G%d@@,%d],
+109,\n
+110,\tProcess [@G%d - %s@@] moving from the [@G%s@@] state to the [@G%s@@] state\n
+111,\tProcess [@G%d@@] created into the [@G%s@@] state, from program[@G%s@@]\n
+112,USER:
+113,DAEMONS:
+116,\tProcess [@G%d - %s@@] will transfer the control of the processor to process [@G%d - %s@@]\n
+117,\tProcess [@G%d - %s@@] cannot transfer the control of the processor to any process\n
+120,@CClock interrupt number [%d] has occurred\n
+121,Process [@G%d - %s@@] is thrown out of the processor by process [@G%d - %s@@]\n
+122,@MProcess [@G%d - %s@@] is penalized and will be forced to sleep\n

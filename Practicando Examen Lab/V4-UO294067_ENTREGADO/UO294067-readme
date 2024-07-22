@@ -1,0 +1,77 @@
+Díaz Álvarez, Paula
+UO294067
+V1_MEMADD (MemConfig): ./Simulator programVerySimple
+V1_Error division by zero  (MemConfig): ./Simulator prog-V1-E3
+V1_3_Multiple programs executed (MemConfig): ./Simulator programVerySimple programVerySimple
+V1_3_Multiple programs executed (MemConfig): ./Simulator programVerySimple prog-V1-E3
+V1_3_Multiple programs executed (MemConfig): ./Simulator prog-V1-E3 prog-V1-E3
+V1_3_Multiple programs executed (MemConfig): ./Simulator prog-V1-E3 programVerySimple
+V1_4_No free entries (MemConfig): ./Simulator programVerySimple programVerySimple programVerySimple programVerySimple
+V1_5_Error size (MemConfig): ./Simulator prog-V1-E5-no_size
+V1_5_Error priority (MemConfig): ./Simulator prog-V1-E5-no_priority
+V1_5_Error doesn't exist program (MemConfig): ./Simulator prog-V1111111
+V1_7_Error size (MemConfig): ./Simulator prog-V1-E7
+V1_8_Set sipID to 0 (MemConfig): ./Simulator --initialPID=0 programVerySimple
+V1_8_Set sipID to 3 (MemConfig): ./Simulator --initialPID=3 programVerySimple
+V1_12_No control transferred (MemConfig): ./Simulator prog-V1-E12
+V1_12_Control transferred (MemConfig): ./Simulator prog-V1-E12_other prog-V1-E12_other
+V1_12_Control transferred (MemConfig): ./Simulator prog-V1-E12 prog-V1-E12_other
+V1_12_Control transferred (MemConfig): ./Simulator --debugSections=S yield yield2
+V1_13_Save context (MemConfig): ./Simulator save save2
+V1_15_Error doesn't exist program (MemConfig): ./Simulator programVe
+------------
+V2_2_Clock (MemConfig): ./Simulator clock
+V2_6_Sleep (MemConfig): ./Simulator sleep
+V2_6_Sleep (MemConfig): ./Simulator prog-V2-E5
+V2_6_Sleep (MemConfig): ./Simulator prog-V2-E5 prog-V2-E5
+V2_6_Sleep (MemConfig): ./Simulator prog-V2-E5_other prog-V2-E5
+------------
+V3_Many programs doesn't exist (MemConfig): ./Simulator ex1 4 ex2 5 ex3 7 ex4 0
+V3_Program created at 0 (MemConfig): ./Simulator programVerySimple 0
+V3_Program created at 8 (MemConfig): ./Simulator programVerySimple 8
+V3_Program created at 15 (MemConfig): ./Simulator programVerySimple 15
+V3_Program created at 0 (MemConfig): ./Simulator programVerySimple 8 prog-V2-E5 15
+------------
+V4_2_Error_Division by zero (MemConfig): ./Simulator prog-V4-E2_divisionByZero
+V4_2_Error_Invalid address (MemConfig): ./Simulator prog-V4-E2_invalidAddress
+V4_2_Error_Invalid processor mode (MemConfig): ./Simulator prog-V4-E2_invalidProcessorMode
+V4_3_Error_Non existing instruction (MemConfig): ./Simulator prog-V4-E3_invalidInstruction
+V4_4_Error_System call doesn't exist (MemConfig): ./Simulator prog-V4-E4_nonExistingSystemCall
+V4_8_Program allocation (MemConfig): ./Simulator prog-V4-E6_Size90
+V4_8_Program allocation (MemConfig): ./Simulator prog-V4-E6_Size90 prog-V4-E6_Size90
+V4_8_Program allocation_Huge size (MemConfig): ./Simulator prog-V4-E6_Size500
+V4_8_Program allocation_Huge size and correct one (MemConfig): ./Simulator prog-V4-E6_Size500 prog-V4-E6_Size90
+V4_8_Program allocation (MemConfig): ./Simulator prog-V4-E6_Size3
+V4_8_Program allocation_Not fit: ./Simulator --memConfigFile=MemConfig2 programVerySimple
+V4_8_Program allocation_Not fit: ./Simulator --memConfigFile=MemConfig2 prog-V1-E3
+V4_8_Program allocation_Not fit: ./Simulator --memConfigFile=MemConfig2 programVerySimple prog-V1-E3
+V4_8_Program allocation_Not fit: ./Simulator --memConfigFile=MemConfig2 programVerySimple programVerySimple programVerySimple programVerySimple
+V4_8_Program allocation_Not fit: ./Simulator --memConfigFile=MemConfig2 prog-V1-E12
+V4_8_Program allocation: ./Simulator --memConfigFile=MemConfig3 prog-V4-E6_Size3
+V4_8_Program allocation: ./Simulator --memConfigFile=MemConfig3 prog-V4-E6_Size3 prog-V4-E6_Size3
+V4_8_Program allocation: ./Simulator --memConfigFile=MemConfig3 prog-V4-E6_Size3 prog-V4-E6_Size3 prog-V4-E6_Size3
+V4_8_Program allocation: ./Simulator --memConfigFile=MemConfig3 programVerySimple programVerySimple programVerySimple prog-V4-E6_Size3
+------------
+prog-V1-E12: program to test the yield (transfer control)
+prog-V1-E12_other: program to test the yield (transfer control)
+prog-V1-E3: program that divides by zero
+prog-V1-E5-no_priority: program with negative priority
+prog-V1-E5-no_size: program with negative priority
+prog-V1-E7: program with not enough side
+prog-V2-E5: program that sleeps
+prog-V2-E5_other: program that sleeps
+prog-V4-E2_divisionByZero: program that divides by zero for showing the new error message
+prog-V4-E2_invalidAddress: program that access an address out of range for showing the new error message
+prog-V4-E2_invalidProcessorMode: a normal program with HALT at the end for showing the new error message
+prog-V4-E3_invalidInstruction: a program with an instruction that doesn't exist for showing the new error message
+prog-V4-E4_nonExistingSystemCall: a program that uses TRAP with a non existing system call for showing the new error message
+prog-V4-E6_Size3: a program with size 3
+prog-V4-E6_Size500: a program with size 500
+prog-V4-E6_Size90: a program with size 90
+programVerySimple: a program with MEMADD
+save: program to test the yield and see that the context is safe
+save2: program to test the yield and see that the context is safe
+sleep: program that sleeps many times
+yield: program to test the yield (transfer control)
+yield2: program to test the yield (transfer control)
+

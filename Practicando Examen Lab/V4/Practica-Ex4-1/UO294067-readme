@@ -1,0 +1,50 @@
+//EXAM V4-Viejo
+enum SystemCallIdentifiers { SYSCALL_END=3, SYSCALL_YIELD=4, SYSCALL_PRINTEXECPID=5, SYSCALL_SLEEP=7, SYSCALL_EXECUTELTS=9}; //SYSCALL_SLEEP=7  V2-5f //EXAM V4-Viejo
+
+146,@MProcess [@R%d - %s@@] will make an EXECUTE-LTS Syscall\n
+147,@MProcess [@R%d - %s@@] made a not allowed EXECUTE-LTS Syscall\n
+
+if (numberOfSuccessfullyCreatedProcesses>=1) {
+		OperatingSystem_PrintStatus(); //V2-3e
+		lastCallLTS=1; //EXAM V4-Viejo
+	} else{
+		lastCallLTS=0; //EXAM V4-Viejo
+	}
+
+case SYSCALL_EXECUTELTS:{ //EXAM V4-Viejo
+			if(lastCallLTS==0){
+				if(processTable[executingProcessID].queueID==DAEMONSQUEUE){
+					ComputerSystem_DebugMessage(TIMED_MESSAGE,146,EXAM,executingProcessID,programList[processTable[executingProcessID].programListIndex]->executableName);
+					int created=OperatingSystem_LongTermScheduler();
+
+					int beforePID=executingProcessID;
+					int newPID=beforePID;
+					int maxPriority=processTable[beforePID].priority;
+					int i;
+					for(i=0; i<PROCESSTABLEMAXSIZE && created>0;i++){ 
+						if(processTable[i].state==READY && maxPriority > processTable[i].priority){
+							maxPriority=processTable[i].priority;
+							newPID=i;
+						}
+					}
+
+					if(beforePID!=newPID){
+						ComputerSystem_DebugMessage(TIMED_MESSAGE,121,SHORTTERMSCHEDULE,beforePID,programList[processTable[beforePID].programListIndex]->executableName, newPID,programList[processTable[newPID].programListIndex]->executableName);
+						OperatingSystem_PreemptRunningProcess();
+						//OperatingSystem_Dispatch(newPID);
+						OperatingSystem_Dispatch(OperatingSystem_ShortTermScheduler()); //Dispatch error?
+						OperatingSystem_PrintStatus();
+						if(newPID!=sipID) { //NEW
+							//Processor_SetPC(processTable[newPID].copyOfPCRegister); 
+							Processor_DeactivatePSW_Bit(EXECUTION_MODE_BIT);
+							//numberOfReadyToRunProcesses[USERPROCESSQUEUE]--; //ERROR 27/04/24
+						}
+					}
+					Processor_DeactivatePSW_Bit(INTERRUPT_MASKED_BIT);
+
+				} else {
+					ComputerSystem_DebugMessage(TIMED_MESSAGE,147,EXAM,executingProcessID,programList[processTable[executingProcessID].programListIndex]->executableName);
+				}
+			}
+			break;
+		}

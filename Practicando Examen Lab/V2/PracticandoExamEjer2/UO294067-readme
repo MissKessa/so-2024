@@ -1,0 +1,72 @@
+//OperatingSystem.c
+int interruptExecuting=0; //EXAM 2023
+
+// Function that assigns the processor to a process
+void OperatingSystem_Dispatch(int PID) {
+	if(PID==-1 || PID==NOPROCESS) {
+		PID=NOPROCESS;
+		return;
+	}
+	// The process identified by PID becomes the current executing process
+	executingProcessID=PID;
+	// Change the process' state
+	processTable[PID].state=EXECUTING;
+	ComputerSystem_DebugMessage(NO_TIMED_MESSAGE,110,SYSPROC,PID,programList[processTable[PID].programListIndex]->executableName,statesNames[1],statesNames[2]); //V1-10b
+	interruptExecuting=Clock_GetNumberOfClockInterrupts();//EXAM 2023
+	// Modify hardware registers with appropriate values for the process identified by PID
+	OperatingSystem_RestoreContext(PID);
+}
+
+void OperatingSystem_HandleClockInterrupt(){ //In OperatingSystem.c Exercise 1-b of V2   V2-1b
+	ComputerSystem_DebugMessage(TIMED_MESSAGE,120,INTERRUPT,Clock_GetNumberOfClockInterrupts()); //V2-1c
+
+	if (interruptExecuting==Clock_GetNumberOfClockInterrupts()+3 && processTable[executingProcessID].queueID!=DAEMONQUEUE){
+		if(!Processor_PSW_BitState(INTERRUPT_MASKED_BIT)){
+			ComputerSystem_DebugMessage(TIMED_MESSAGE,122,EXAM,executingProcessID,programList[processTable[executingProcessID].programListIndex]->executableName);
+			int acc=Processor_GetAccumulator();
+			if(acc<0){
+				acc*=-1;
+			}
+			processTable[executingProcessID].whenToWakeUp=acc+Clock_GetNumberOfClockInterrupts()+1;
+			OperatingSystem_SleepRunningProcess();
+			OperatingSystem_Dispatch(OperatingSystem_ShortTermScheduler());
+		}
+	}
+
+	//V2-6a
+	int interrupts=Clock_GetNumberOfClockInterrupts();
+	int awakenProcesses=0;
+	int i;
+	for (i=0; i<PROCESSTABLEMAXSIZE;i++){
+		if(processTable[i].state==BLOCKED && interrupts == processTable[i].whenToWakeUp) {
+			OperatingSystem_AwakeProcess(i);
+			awakenProcesses++;
+			OperatingSystem_PrintStatus(); //V2-6b ERROR
+		}
+		
+	}
+
+	//V2-6c
+	int beforePID=executingProcessID;
+	int newPID=beforePID;
+	int maxPriority=processTable[beforePID].priority;
+	
+	for(i=0; i<PROCESSTABLEMAXSIZE && awakenProcesses>0 ;i++){ 
+		if(processTable[i].state==READY && maxPriority > processTable[i].priority){
+			maxPriority=processTable[i].priority;
+			newPID=i;
+		}
+	}
+	
+	if(beforePID!=newPID){
+		ComputerSystem_DebugMessage(TIMED_MESSAGE,121,SHORTTERMSCHEDULE,beforePID,programList[processTable[beforePID].programListIndex]->executableName, newPID,programList[processTable[newPID].programListIndex]->executableName);
+		OperatingSystem_PreemptRunningProcess();
+		OperatingSystem_Dispatch(newPID);
+		OperatingSystem_PrintStatus();
+		if(newPID!=sipID) { //NEW
+	 		Processor_SetPC(processTable[newPID].copyOfPCRegister); 
+			Processor_DeactivatePSW_Bit(EXECUTION_MODE_BIT);
+		}
+	}
+	return; 
+}

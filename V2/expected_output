@@ -1,0 +1,2 @@
+clock: there should be 16 clock interrupts
+sleep: the process should be restored at interrupts 4 and 10

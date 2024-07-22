@@ -1,0 +1,8 @@
+30
+5
+
+ADD 3 5
+TRAP 4
+ADD 20 13
+
+HALT

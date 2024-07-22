@@ -1,0 +1,18 @@
+void OperatingSystem_ReducePriorityBlocked(){
+	int i;
+	for (i=0; i<PARTITIONTABLEMAXSIZE;i++){
+		int pid=partitionsTable[i].PID;
+		if(pid>=0 && pid<PROCESSTABLEMAXSIZE) {
+			float percentage=processTable[pid].processSize/partitionsTable[i].size*100;
+			if(percentage>25){
+				int priority =processTable[pid].priority;
+				if(priority-5>=0){
+					processTable[pid].priority=priority-5;
+					ComputerSystem_DebugMessage(TIMED_MESSAGE,146,EXAM,pid,programList[processTable[pid].programListIndex]->executableName,priority, processTable[pid].priority, i, percentage);
+				}
+			}
+		}
+	}
+}
+
+146,@MBlocked process [%d - %s] priority changes from [%d] to [%d] because internal fragmentation of partition [%d] is [%s]@@\n

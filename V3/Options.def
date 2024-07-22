@@ -1,0 +1,13 @@
+OPTION(initialPID,LastPid) 				// 1
+OPTION(endSimulationTime,-1)			// 2
+OPTION(numAsserts,500)					// 3
+OPTION(assertsFile,asserts)				// 4
+OPTION(messagesSTDFile,messagesSTD.txt)	// 5
+OPTION(debugSections,A)					// 6
+OPTION(daemonsProgramsFile,DaemonsProgramsFile) // 7
+OPTION(userProgramsFile,UserProgramsFile)       // 8
+OPTION(memorySize,300)					// 9
+OPTION(numProcesses,4)					// 10
+OPTION(intervalBetweenInterrupts,5)		// 11 V2-studentsCode
+OPTION(generateAsserts,No value)		// 12
+OPTION(help,No value)					// 13

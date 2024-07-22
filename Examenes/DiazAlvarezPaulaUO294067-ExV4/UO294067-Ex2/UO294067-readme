@@ -1,0 +1,101 @@
+With the last ex40 doesn't do anything
+./Simulator --debugSections=M --memConfigFile=MemConf2 --daemonsProgramsFile=daemonsFile2  ex3 1 ex3 10 ex3 20 ex3 30 | grep "has been"
+//Exam-V4-2024
+
+In OperatingSystem.c
+int lastUserPartition=-1;
+// Main memory is assigned in chunks. All chunks are the same size. A process
+// always obtains the chunk whose position in memory is equal to the processor identifier
+int OperatingSystem_ObtainMainMemory(int indexOfExecutableProgram, int processSize, int PID) {
+	// if (processSize>MAINMEMORYSECTIONSIZE)
+	// 	return TOOBIGPROCESS;
+	
+	// return PID*MAINMEMORYSECTIONSIZE;
+	ComputerSystem_DebugMessage(TIMED_MESSAGE,142,SYSMEM,PID,programList[indexOfExecutableProgram]->executableName, processSize); //V4-6b
+	//V4-6a
+	if(programList[PID]->type==USERPROGRAM){ //Exam-V4-2024
+		int i;
+		int firstFit=-1;
+		int currentPartition;
+		int numberPart=0;
+		// for (i=0; i<PARTITIONTABLEMAXSIZE;i++){
+		// 	if(partitionsTable[i].PID!=NOPROCESS && processTable[partitionsTable[i].PID].queueID==USERPROCESSQUEUE){ //it fits, it's the first best fit
+		// 		lastUserPartition++;
+		// 	}
+		// }
+
+		// currentPartition=lastUserPartition;
+		// while(i<PARTITIONTABLEMAXSIZE){
+		// 	if(partitionsTable[currentPartition].size >= processSize){ //it fits
+		// 		if(partitionsTable[currentPartition].PID==NOPROCESS){
+		// 			firstFit=currentPartition;
+		// 			break;
+		// 		}
+		// 		numberPart++;
+		// 	} 
+		// 	currentPartition++;
+		// 	if(currentPartition>=PARTITIONTABLEMAXSIZE){
+		// 		currentPartition=0;
+		// 	}
+		// 	i++;
+		// }
+
+		for (i=lastUserPartition; i<PARTITIONTABLEMAXSIZE;i++){
+			if(partitionsTable[i].size >= processSize){ //it fits
+				if(partitionsTable[i].PID==NOPROCESS){
+					firstFit=i;
+					break;
+				}
+				numberPart++;
+			} 
+		}
+
+		for (i=0; i<lastUserPartition && firstFit==-1;i++){
+			if(partitionsTable[i].size >= processSize){ //it fits
+				if(partitionsTable[i].PID==NOPROCESS){
+					firstFit=i;
+					break;
+				}
+				numberPart++;
+			} 
+		}
+
+		if(firstFit!=-1){
+			lastUserPartition=firstFit+1;
+			return firstFit; //V4-6c
+		}
+		ComputerSystem_DebugMessage(TIMED_MESSAGE,144,ERROR,programList[indexOfExecutableProgram]->executableName); //V4-6d
+		if(numberPart==0){ //V4-6d-i
+			return TOOBIGPROCESS;
+		} else { //V4-6d-ii
+			return MEMORYFULL;
+		}
+	} else {
+		int i;
+		int bestFit=-1;
+		int numberPart=0;
+		for (i=0; i<PARTITIONTABLEMAXSIZE;i++){
+			if(partitionsTable[i].size >= processSize && bestFit==-1){ //it fits, it's the first best fit
+				if(partitionsTable[i].PID==NOPROCESS)
+					bestFit=i;
+				numberPart++;
+			} else if(bestFit!=-1 && partitionsTable[i].size >= processSize && partitionsTable[i].size<partitionsTable[bestFit].size){
+				if(partitionsTable[i].PID==NOPROCESS)
+					bestFit=i;
+				numberPart++;
+			}
+		}
+
+		if(bestFit!=-1){
+			return bestFit; //V4-6c
+		}
+		
+		ComputerSystem_DebugMessage(TIMED_MESSAGE,144,ERROR,programList[indexOfExecutableProgram]->executableName); //V4-6d
+		if(numberPart==0){ //V4-6d-i
+			return TOOBIGPROCESS;
+		} else { //V4-6d-ii
+			return MEMORYFULL;
+		}
+	}
+
+}

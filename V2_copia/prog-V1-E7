@@ -1,0 +1,7 @@
+1
+5
+ADD 10 0
+WRITE 15 //Writting 10 into memory address 15
+MEMADD 20 15
+
+HALT

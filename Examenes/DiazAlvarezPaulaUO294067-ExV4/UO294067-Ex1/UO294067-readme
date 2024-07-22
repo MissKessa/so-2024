@@ -1,0 +1,90 @@
+./Simulator --debugSections=Xd --memConfigFile=MemConf1  ex1 15 ex2 10
+./Simulator --debugSections=Xd --memConfigFile=MemConf1 --daemonsProgramsFile=daemonsFile1 ex1 15
+// Exam-V4-2024 
+In processor.h
+enum INT_BITS {SYSCALL_BIT=2, DIVBYZERO_INT=5, EXCEPTION_BIT=6, CLOCKINT_BIT=9}; //CLOCKINT_BIT=9  V2-1a // Exam-V4-2024 
+In OperatingSystemCode
+11
+IRET // Initial Operation for OS
+HALT // Shutdown the System
+// Here interrupt vector
+OS 2 // SysCall Interrupt
+IRET
+OS 5 //DivByZero
+IRET
+OS 6 // Exception Interrupt
+IRET
+OS 9 //Clock Interrupt
+IRET
+
+In messagesSTD
+146,@MUser process[%d - %s] instruction 'DIV %d %d' has been computed as 999@@\n
+147,@MDaemon process[%d - %s] has caused a division by zero interrupt and is being terminated@@\n
+
+In processor.c
+        case DIV_INST: 
+			// if (operand2 == 0)
+			// 	//Processor_RaiseInterrupt(EXCEPTION_BIT); V4-1b
+			// 	Processor_RaiseException(DIVISIONBYZERO);//V4-1b
+			// else {
+			// 	registerAccumulator_CPU=operand1 / operand2;
+			// 	registerPC_CPU++;
+			// }
+			// break;
+
+			if (operand2 == 0) {// Exam-V-2024 
+				//Processor_RaiseInterrupt(EXCEPTION_BIT); V4-1b
+				registerC_CPU=operand1;
+				registerD_CPU=operand2;
+				Processor_RaiseInterrupt(DIVBYZERO_INT);//V4-1b
+				registerPC_CPU++;
+			}else {
+				registerAccumulator_CPU=operand1 / operand2;
+				registerPC_CPU++;
+			}
+			break;
+
+void Processor_InitializeInterruptVectorTable(int interruptVectorInitialAddress) {
+	int i;
+	for (i=0; i< INTERRUPTTYPES;i++) { // Inicialice all to inicial IRET
+		interruptVectorTable[i]=interruptVectorInitialAddress-2;  
+	}
+
+	interruptVectorTable[SYSCALL_BIT]=interruptVectorInitialAddress;  // SYSCALL_BIT=2
+	interruptVectorTable[DIVBYZERO_INT]=interruptVectorInitialAddress+2; //Exam-V4-2024
+	interruptVectorTable[EXCEPTION_BIT]=interruptVectorInitialAddress+4; // EXCEPTION_BIT=6
+	interruptVectorTable[CLOCKINT_BIT]=interruptVectorInitialAddress+6;//ERROR 29/04
+
+	// nterruptVectorTable[SYSCALL_BIT]=interruptVectorInitialAddress;  // SYSCALL_BIT=2
+	// interruptVectorTable[EXCEPTION_BIT]=interruptVectorInitialAddress+2; // EXCEPTION_BIT=6
+	// interruptVectorTable[DIVBYZERO_INT]=interruptVectorInitialAddress+1; //Exam-V4-2024
+	// interruptVectorTable[CLOCKINT_BIT]=interruptVectorInitialAddress+4;//ERROR 29/04
+}
+
+In operatingSystem.c
+void OperatingSystem_InterruptLogic(int entryPoint){
+	switch (entryPoint){
+		case SYSCALL_BIT: // SYSCALL_BIT=2
+			OperatingSystem_HandleSystemCall();
+			break;
+		case EXCEPTION_BIT: // EXCEPTION_BIT=6
+			OperatingSystem_HandleException();
+			break;
+		case CLOCKINT_BIT:
+			OperatingSystem_HandleClockInterrupt();
+			break;
+		case DIVBYZERO_INT: // Exam-V4-2024 
+			OperatingSystem_HandleDivByZeroInterrupt();
+			break;
+	}
+}
+
+void OperatingSystem_HandleDivByZeroInterrupt(){ // Exam-V4-2024 
+	if (processTable[executingProcessID].queueID==USERPROCESSQUEUE) {
+		Processor_SetAccumulator(999);
+		ComputerSystem_DebugMessage(TIMED_MESSAGE,146,EXAM,executingProcessID,programList[processTable[executingProcessID].programListIndex]->executableName,Processor_GetRegisterC(), Processor_GetRegisterD());
+	} else {
+		ComputerSystem_DebugMessage(TIMED_MESSAGE,147,EXAM,executingProcessID,programList[processTable[executingProcessID].programListIndex]->executableName);
+		OperatingSystem_TerminateExecutingProcess();
+	}
+}

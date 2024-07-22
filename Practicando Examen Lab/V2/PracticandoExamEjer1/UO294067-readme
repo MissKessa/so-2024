@@ -1,0 +1,74 @@
+//OperatingSystem.c
+int yieldFailedNoProcesses=0;//EX-2023
+int yieldFailedNoPriority=0;//EX-2023
+
+./Simulator prog-V1-E12 prog-V1-E12_other
+./Simulator prog-V1-E12
+./Simulator programVerySimple
+
+
+
+//messagesSTD.txt
+122,@MYIELD failed because there are no processes ready to run: [%d] times\n
+123,@MYIELD failed because processes have different priorities: [%d] times\n
+
+void OperatingSystem_TerminateExecutingProcess() {
+
+	processTable[executingProcessID].state=EXIT;
+	ComputerSystem_DebugMessage(NO_TIMED_MESSAGE,110,SYSPROC,executingProcessID,programList[processTable[executingProcessID].programListIndex]->executableName,statesNames[2],statesNames[4]); //V1-10b
+	
+	if (executingProcessID==sipID && numberOfNotTerminatedUserProcesses==0 && numberOfSleepingProcesses==0) { //NEW condition
+		// finishing sipID, change PC to address of OS HALT instruction
+		Processor_SetSSP(MAINMEMORYSIZE-1);
+		Processor_PushInSystemStack(OS_address_base+1);
+		Processor_PushInSystemStack(Processor_GetPSW());
+		executingProcessID=NOPROCESS;
+		ComputerSystem_DebugMessage(TIMED_MESSAGE,99,SHUTDOWN,"The system will shut down now...\n");
+		ComputerSystem_PowerOff();
+		return; // Don't dispatch any process
+	}
+
+	Processor_SetSSP(Processor_GetSSP()+2); // unstack PC and PSW stacked
+
+	if (programList[processTable[executingProcessID].programListIndex]->type==USERPROGRAM) {
+		// One more user process that has terminated
+		numberOfNotTerminatedUserProcesses--;
+	}
+	
+	if (numberOfNotTerminatedUserProcesses==0) {
+		// Simulation must finish, telling sipID to finish
+		OperatingSystem_ReadyToShutdown();
+		OperatingSystem_Dispatch(sipID);
+		return;
+
+	} else if (numberOfNotTerminatedUserProcesses==numberOfSleepingProcesses){ //NEW
+		OperatingSystem_Dispatch(sipID);
+		Processor_ActivatePSW_Bit(EXECUTION_MODE_BIT);
+		return;
+	}
+
+	// Select the next process to execute (sipID if no more user processes)
+	int selectedProcess=OperatingSystem_ShortTermScheduler();
+	while(selectedProcess==executingProcessID){ //IMPORTANT
+		selectedProcess=OperatingSystem_ShortTermScheduler();
+	}
+
+	OperatingSystem_Dispatch(selectedProcess);
+	if(selectedProcess!=sipID){ //IMPORTANT
+		Processor_DeactivatePSW_Bit(EXECUTION_MODE_BIT);
+		Processor_DeactivatePSW_Bit(INTERRUPT_MASKED_BIT);
+	}
+}
+
+void OperatingSystem_Ex1(){
+	ComputerSystem_DebugMessage(TIMED_MESSAGE,122,EXAM,yieldFailedNoProcesses);
+	ComputerSystem_DebugMessage(TIMED_MESSAGE,123,EXAM,yieldFailedNoPriority);
+}
+
+// Powers off the CS (the C program ends)
+void ComputerSystem_PowerOff() {
+	// Show message in red colour: "END of the simulation\n" 
+	OperatingSystem_Ex1(); //EXAM-2023
+	ComputerSystem_DebugMessage(TIMED_MESSAGE,99,SHUTDOWN,"END of the simulation\n");  
+	exit(0);
+}

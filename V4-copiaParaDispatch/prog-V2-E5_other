@@ -1,0 +1,8 @@
+20
+7
+ADD 2 1
+TRAP 7 -1
+WRITE 11
+READ 18
+
+HALT

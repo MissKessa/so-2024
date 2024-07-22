@@ -1,0 +1,15 @@
+30
+5
+NOP
+TRAP 5
+ADD 10 -13
+WRITE 15
+READ 15
+
+OS 1
+IRET
+ADD 10 0
+WRITE 15 //Writting 10 into memory address 15
+MEMADD 20 15
+
+HALT
